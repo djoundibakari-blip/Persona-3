@@ -1,0 +1,259 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-menu-cyan: var(--menu-cyan);
+  --color-menu-cyan-deep: var(--menu-cyan-deep);
+  --color-menu-red: var(--menu-red);
+  --color-menu-red-foreground: var(--menu-red-foreground);
+
+  --font-sans: var(--font-geist-sans), sans-serif;
+  --font-display: var(--font-rajdhani), sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+  --font-retro: var(--font-chakra-petch), var(--font-geist-mono), monospace;
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Persona 3 Reload — Midnight Blue & Electric Yellow */
+  --background: oklch(0.17 0.045 262);
+  --foreground: oklch(0.97 0.01 250);
+
+  --card: oklch(0.22 0.055 262);
+  --card-foreground: oklch(0.97 0.01 250);
+
+  --popover: oklch(0.2 0.05 262);
+  --popover-foreground: oklch(0.97 0.01 250);
+
+  /* Electric blue */
+  --primary: oklch(0.62 0.2 252);
+  --primary-foreground: oklch(0.15 0.04 262);
+
+  --secondary: oklch(0.28 0.06 262);
+  --secondary-foreground: oklch(0.97 0.01 250);
+
+  --muted: oklch(0.26 0.05 262);
+  --muted-foreground: oklch(0.72 0.03 255);
+
+  /* Signature yellow */
+  --accent: oklch(0.87 0.17 95);
+  --accent-foreground: oklch(0.18 0.04 262);
+
+  --destructive: oklch(0.62 0.23 25);
+
+  --border: oklch(0.4 0.08 255 / 45%);
+  --input: oklch(0.35 0.06 262);
+  --ring: oklch(0.62 0.2 252);
+
+  /* Pause-menu accents — cyan idle buttons, red selection (per the in-game UI) */
+  --menu-cyan: oklch(0.78 0.13 200);
+  --menu-cyan-deep: oklch(0.48 0.14 218);
+  /* #c4001a — the exact crimson used for the P3R pause-menu selection stripe */
+  --menu-red: oklch(0.516 0.21 26);
+  --menu-red-foreground: oklch(0.97 0.01 250);
+
+  --radius: 0.2rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* Controlled, section-by-section scroll (à la HunterDevV0) instead of free scroll.
+     Mandatory, not proximity — sections are full-viewport "slides" (snap-always),
+     so a scroll that lands mid-section should still commit to the nearest one
+     instead of proximity's looser "only snap if already close" behavior. */
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  /* Angular / skewed P3R containers */
+  .clip-slant {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 1.5rem));
+  }
+  .clip-tag {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 1.25rem 100%, 0 calc(100% - 1.25rem));
+  }
+  .clip-arrow {
+    clip-path: polygon(0 0, calc(100% - 1rem) 0, 100% 50%, calc(100% - 1rem) 100%, 0 100%);
+  }
+  .clip-card {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 1.75rem), calc(100% - 1.75rem) 100%, 0 100%);
+  }
+  /* Pause-menu selection cursor: a skewed triangle */
+  .clip-cursor {
+    clip-path: polygon(0 10%, 100% 50%, 0 90%);
+  }
+  .text-stroke-accent {
+    -webkit-text-stroke: 1.5px var(--accent);
+    color: transparent;
+  }
+  .grid-lines {
+    background-image:
+      linear-gradient(to right, oklch(0.62 0.2 252 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0.62 0.2 252 / 0.06) 1px, transparent 1px);
+    background-size: 42px 42px;
+  }
+  /* Tight scanline texture for retro stat-card faces (distinct from the
+     page-wide CRT background scanlines — this one sits on a UI card). */
+  .retro-scanlines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      oklch(0.97 0.01 250 / 0.05) 0px,
+      oklch(0.97 0.01 250 / 0.05) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+  /* Thin, on-theme scrollbar for sections that scroll their own content
+     (e.g. the projects grid) instead of the whole page. */
+  .retro-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+    /* Keep wheel/touch scroll trapped inside the grid instead of leaking
+       into the page's mandatory snap-scroll and yanking to the next section. */
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .retro-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .retro-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .retro-scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 9999px;
+  }
+  .retro-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary);
+  }
+  /* Arrow-driven carousels (e.g. the projects rail) — scrollable by touch/
+     trackpad, but the native scrollbar track would clash with the buttons. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 22s linear infinite;
+}
+
+/* ── Old CRT television look ─────────────────────────────
+   Fixed over the whole page (see CrtOverlay) — oversaturated +
+   scanlines + vignette + grain + a slow retrace sweep, so every
+   section is viewed through the same screen instead of each
+   re-applying its own grading around its own background. */
+
+.crt-global {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  pointer-events: none;
+  animation: crt-flicker 6.5s infinite;
+}
+
+.crt-global__grade {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: saturate(1.6) contrast(1.12) brightness(1.04);
+}
+
+.crt-overlay__scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.18) 0px,
+    rgba(0, 0, 0, 0.18) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  mix-blend-mode: multiply;
+}
+
+.crt-overlay__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+.crt-overlay__noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 180px 180px;
+}
+
+.crt-overlay__sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -18%;
+  height: 14%;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.06), transparent);
+  mix-blend-mode: screen;
+  animation: crt-sweep 9s linear infinite;
+  will-change: transform;
+}
+
+/* translateY, not top — top forces layout/repaint on every frame of an
+   infinite loop; with this now running under a page-wide backdrop-filter
+   (see .crt-global__grade) that got expensive enough to visibly stutter
+   scrolling. transform is compositor-only, so it's free either way. */
+@keyframes crt-sweep {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(123vh); }
+}
+
+@keyframes crt-flicker {
+  0%, 93%, 100% { opacity: 1; }
+  94% { opacity: 0.93; }
+  95% { opacity: 1; }
+  96% { opacity: 0.96; }
+}
